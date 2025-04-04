@@ -13,9 +13,9 @@ let config: any = {};
 // Read configuration from environment variables
 if (process.env.DISCORD_TOKEN) {
     config.DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-    console.log("Config loaded from environment variables. Discord token available:", !!config.DISCORD_TOKEN);
+    console.error("Config loaded from environment variables. Discord token available:", !!config.DISCORD_TOKEN);
     if (config.DISCORD_TOKEN) {
-        console.log("Token length:", config.DISCORD_TOKEN.length);
+        console.error("Token length:", config.DISCORD_TOKEN.length);
     }
 } else {
     // Try to parse configuration from command line arguments (for backward compatibility)
@@ -25,25 +25,25 @@ if (process.env.DISCORD_TOKEN) {
             let configStr = process.argv[configArgIndex + 1];
             
             // Print raw configuration string for debugging
-            console.log("Raw config string:", configStr);
+            console.error("Raw config string:", configStr);
             
             // Try to parse JSON
             config = JSON.parse(configStr);
-            console.log("Config parsed successfully. Discord token available:", !!config.DISCORD_TOKEN);
+            console.error("Config parsed successfully. Discord token available:", !!config.DISCORD_TOKEN);
             
             if (config.DISCORD_TOKEN) {
-                console.log("Token length:", config.DISCORD_TOKEN.length);
+                console.error("Token length:", config.DISCORD_TOKEN.length);
             }
         } catch (error) {
             console.error("Failed to parse config argument:", error);
             console.error("Raw config argument:", process.argv[configArgIndex + 1]);
             
             // Try to read arguments directly (for debugging)
-            console.log("All arguments:", process.argv);
+            console.error("All arguments:", process.argv);
         }
     } else {
         console.warn("No config found in environment variables or command line arguments");
-        console.log("All arguments:", process.argv);
+        console.error("All arguments:", process.argv);
     }
 }
 
@@ -1357,7 +1357,7 @@ const autoLogin = async () => {
             console.error("Auto-login failed:", error);
         }
     } else {
-        console.log("No Discord token found in config, skipping auto-login");
+        console.error("No Discord token found in config, skipping auto-login");
     }
 };
 
