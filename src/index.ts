@@ -8,52 +8,54 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 
 // Configuration parsing
-let config: any = {};
+let config: any = {
+  DISCORD_TOKEN: ""
+};
 
 // Read configuration from environment variables
 if (process.env.DISCORD_TOKEN) {
-    config.DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-    console.log("Config loaded from environment variables. Discord token available:", !!config.DISCORD_TOKEN);
-    if (config.DISCORD_TOKEN) {
-        console.log("Token length:", config.DISCORD_TOKEN.length);
-    }
+  config.DISCORD_TOKEN = process.env.DISCORD_TOKEN;
+  console.error("Config loaded from environment variables. Discord token available:", !!config.DISCORD_TOKEN);
+  if (config.DISCORD_TOKEN) {
+    console.error("Token length:", config.DISCORD_TOKEN.length);
+  }
 } else {
-    // Try to parse configuration from command line arguments (for backward compatibility)
-    const configArgIndex = process.argv.indexOf('--config');
-    if (configArgIndex !== -1 && configArgIndex < process.argv.length - 1) {
-        try {
-            let configStr = process.argv[configArgIndex + 1];
-            
-            // Print raw configuration string for debugging
-            console.log("Raw config string:", configStr);
-            
-            // Try to parse JSON
-            config = JSON.parse(configStr);
-            console.log("Config parsed successfully. Discord token available:", !!config.DISCORD_TOKEN);
-            
-            if (config.DISCORD_TOKEN) {
-                console.log("Token length:", config.DISCORD_TOKEN.length);
-            }
-        } catch (error) {
-            console.error("Failed to parse config argument:", error);
-            console.error("Raw config argument:", process.argv[configArgIndex + 1]);
-            
-            // Try to read arguments directly (for debugging)
-            console.log("All arguments:", process.argv);
-        }
-    } else {
-        console.warn("No config found in environment variables or command line arguments");
-        console.log("All arguments:", process.argv);
+  // Try to parse configuration from command line arguments (for backward compatibility)
+  const configArgIndex = process.argv.indexOf('--config');
+  if (configArgIndex !== -1 && configArgIndex < process.argv.length - 1) {
+    try {
+      let configStr = process.argv[configArgIndex + 1];
+
+      // Print raw configuration string for debugging
+      console.error("Raw config string:", configStr);
+
+      // Try to parse JSON
+      config = JSON.parse(configStr);
+      console.error("Config parsed successfully. Discord token available:", !!config.DISCORD_TOKEN);
+
+      if (config.DISCORD_TOKEN) {
+        console.error("Token length:", config.DISCORD_TOKEN.length);
+      }
+    } catch (error) {
+      console.error("Failed to parse config argument:", error);
+      console.error("Raw config argument:", process.argv[configArgIndex + 1]);
+
+      // Try to read arguments directly (for debugging)
+      console.error("All arguments:", process.argv);
     }
+  } else {
+    console.warn("No config found in environment variables or command line arguments");
+    console.error("All arguments:", process.argv);
+  }
 }
 
 // Create Discord client
 const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent
-    ]
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent
+  ]
 });
 
 // Create an MCP server
@@ -70,113 +72,113 @@ const server = new Server(
 );
 
 const DiscordLoginSchema = z.object({
-    random_string: z.string().optional()
+  random_string: z.string().optional()
 });
 
 const SendMessageSchema = z.object({
-    channelId: z.string(),
-    message: z.string()
+  channelId: z.string(),
+  message: z.string()
 });
 
 const GetForumChannelsSchema = z.object({
-    guildId: z.string()
+  guildId: z.string()
 });
 
 const CreateForumPostSchema = z.object({
-    forumChannelId: z.string(),
-    title: z.string(),
-    content: z.string(),
-    tags: z.array(z.string()).optional()
+  forumChannelId: z.string(),
+  title: z.string(),
+  content: z.string(),
+  tags: z.array(z.string()).optional()
 });
 
 const GetForumPostSchema = z.object({
-    threadId: z.string()
+  threadId: z.string()
 });
 
 const ReplyToForumSchema = z.object({
-    threadId: z.string(),
-    message: z.string()
+  threadId: z.string(),
+  message: z.string()
 });
 
 const CreateTextChannelSchema = z.object({
-    guildId: z.string(),
-    channelName: z.string(),
-    topic: z.string().optional()
+  guildId: z.string(),
+  channelName: z.string(),
+  topic: z.string().optional()
 });
 
 const DeleteChannelSchema = z.object({
-    channelId: z.string(),
-    reason: z.string().optional()
+  channelId: z.string(),
+  reason: z.string().optional()
 });
 
 const ReadMessagesSchema = z.object({
-    channelId: z.string(),
-    limit: z.number().min(1).max(100).optional().default(50)
+  channelId: z.string(),
+  limit: z.number().min(1).max(100).optional().default(50)
 });
 
 const GetServerInfoSchema = z.object({
-    guildId: z.string()
+  guildId: z.string()
 });
 
 const AddReactionSchema = z.object({
-    channelId: z.string(),
-    messageId: z.string(),
-    emoji: z.string()
+  channelId: z.string(),
+  messageId: z.string(),
+  emoji: z.string()
 });
 
 const AddMultipleReactionsSchema = z.object({
-    channelId: z.string(),
-    messageId: z.string(),
-    emojis: z.array(z.string())
+  channelId: z.string(),
+  messageId: z.string(),
+  emojis: z.array(z.string())
 });
 
 const RemoveReactionSchema = z.object({
-    channelId: z.string(),
-    messageId: z.string(),
-    emoji: z.string(),
-    userId: z.string().optional()
+  channelId: z.string(),
+  messageId: z.string(),
+  emoji: z.string(),
+  userId: z.string().optional()
 });
 
 const DeleteForumPostSchema = z.object({
-    threadId: z.string(),
-    reason: z.string().optional()
+  threadId: z.string(),
+  reason: z.string().optional()
 });
 
 const DeleteMessageSchema = z.object({
-    channelId: z.string(),
-    messageId: z.string(),
-    reason: z.string().optional()
+  channelId: z.string(),
+  messageId: z.string(),
+  reason: z.string().optional()
 });
 
 const CreateWebhookSchema = z.object({
-    channelId: z.string(),
-    name: z.string(),
-    avatar: z.string().optional(),
-    reason: z.string().optional()
+  channelId: z.string(),
+  name: z.string(),
+  avatar: z.string().optional(),
+  reason: z.string().optional()
 });
 
 const SendWebhookMessageSchema = z.object({
-    webhookId: z.string(),
-    webhookToken: z.string(),
-    content: z.string(),
-    username: z.string().optional(),
-    avatarURL: z.string().optional(),
-    threadId: z.string().optional()
+  webhookId: z.string(),
+  webhookToken: z.string(),
+  content: z.string(),
+  username: z.string().optional(),
+  avatarURL: z.string().optional(),
+  threadId: z.string().optional()
 });
 
 const EditWebhookSchema = z.object({
-    webhookId: z.string(),
-    webhookToken: z.string().optional(),
-    name: z.string().optional(),
-    avatar: z.string().optional(),
-    channelId: z.string().optional(),
-    reason: z.string().optional()
+  webhookId: z.string(),
+  webhookToken: z.string().optional(),
+  name: z.string().optional(),
+  avatar: z.string().optional(),
+  channelId: z.string().optional(),
+  reason: z.string().optional()
 });
 
 const DeleteWebhookSchema = z.object({
-    webhookId: z.string(),
-    webhookToken: z.string().optional(),
-    reason: z.string().optional()
+  webhookId: z.string(),
+  webhookToken: z.string().optional(),
+  reason: z.string().optional()
 });
 
 // Set up the tool list
@@ -233,7 +235,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             forumChannelId: { type: "string" },
             title: { type: "string" },
             content: { type: "string" },
-            tags: { 
+            tags: {
               type: "array",
               items: { type: "string" }
             }
@@ -470,7 +472,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               isError: true
             };
           }
-          
+
           await client.login(token);
           return {
             content: [{ type: "text", text: `Successfully logged in to Discord : ${client.user?.tag}` }]
@@ -541,10 +543,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
           // Fetch all channels from the guild
           const channels = await guild.channels.fetch();
-          
+
           // Filter to get only forum channels
           const forumChannels = channels.filter(channel => channel?.type === ChannelType.GuildForum);
-          
+
           if (forumChannels.size === 0) {
             return {
               content: [{ type: "text", text: `No forum channels found in guild: ${guild.name}` }]
@@ -588,11 +590,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           }
 
           const forumChannel = channel as ForumChannel;
-          
+
           // Get available tags in the forum
           const availableTags = forumChannel.availableTags;
           let selectedTagIds: string[] = [];
-          
+
           // If tags are provided, find their IDs
           if (tags && tags.length > 0) {
             selectedTagIds = availableTags
@@ -610,9 +612,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           });
 
           return {
-            content: [{ 
-              type: "text", 
-              text: `Successfully created forum post "${title}" with ID: ${thread.id}` 
+            content: [{
+              type: "text",
+              text: `Successfully created forum post "${title}" with ID: ${thread.id}`
             }]
           };
         } catch (error) {
@@ -643,7 +645,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
           // Get messages from the thread
           const messages = await thread.messages.fetch({ limit: 10 });
-          
+
           const threadDetails = {
             id: thread.id,
             name: thread.name,
@@ -698,9 +700,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           const sentMessage = await thread.send(message);
 
           return {
-            content: [{ 
-              type: "text", 
-              text: `Successfully replied to forum post. Message ID: ${sentMessage.id}` 
+            content: [{
+              type: "text",
+              text: `Successfully replied to forum post. Message ID: ${sentMessage.id}`
             }]
           };
         } catch (error) {
@@ -737,9 +739,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           });
 
           return {
-            content: [{ 
-              type: "text", 
-              text: `Successfully created text channel "${channelName}" with ID: ${channel.id}` 
+            content: [{
+              type: "text",
+              text: `Successfully created text channel "${channelName}" with ID: ${channel.id}`
             }]
           };
         } catch (error) {
@@ -780,9 +782,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           await channel.delete(reason || "Channel deleted via API");
 
           return {
-            content: [{ 
-              type: "text", 
-              text: `Successfully deleted channel with ID: ${channelId}` 
+            content: [{
+              type: "text",
+              text: `Successfully deleted channel with ID: ${channelId}`
             }]
           };
         } catch (error) {
@@ -821,7 +823,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
           // Fetch messages
           const messages = await channel.messages.fetch({ limit });
-          
+
           if (messages.size === 0) {
             return {
               content: [{ type: "text", text: `No messages found in channel` }]
@@ -844,13 +846,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           })).sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 
           return {
-            content: [{ 
-              type: "text", 
+            content: [{
+              type: "text",
               text: JSON.stringify({
                 channelId,
                 messageCount: formattedMessages.length,
                 messages: formattedMessages
-              }, null, 2) 
+              }, null, 2)
             }]
           };
         } catch (error) {
@@ -881,10 +883,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
           // Fetch additional guild data
           await guild.fetch();
-          
+
           // Fetch channel information
           const channels = await guild.channels.fetch();
-          
+
           // Categorize channels by type
           const channelsByType = {
             text: channels.filter(c => c?.type === ChannelType.GuildText).size,
@@ -895,10 +897,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             stage: channels.filter(c => c?.type === ChannelType.GuildStageVoice).size,
             total: channels.size
           };
-          
+
           // Fetch member count
           const approximateMemberCount = guild.approximateMemberCount || "unknown";
-          
+
           // Format guild information
           const guildInfo = {
             id: guild.id,
@@ -913,7 +915,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             premium: {
               tier: guild.premiumTier,
               subscriptions: guild.premiumSubscriptionCount
-            }
+            },
+            channelList: channels.map(c => ({
+              id: c.id,
+              name: c.name,
+              type: ChannelType[c.type] || c.type
+            }))
           };
 
           return {
@@ -957,9 +964,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           await message.react(emoji);
 
           return {
-            content: [{ 
-              type: "text", 
-              text: `Successfully added reaction ${emoji} to message ID: ${messageId}` 
+            content: [{
+              type: "text",
+              text: `Successfully added reaction ${emoji} to message ID: ${messageId}`
             }]
           };
         } catch (error) {
@@ -1004,9 +1011,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           }
 
           return {
-            content: [{ 
-              type: "text", 
-              text: `Successfully added ${emojis.length} reactions to message ID: ${messageId}` 
+            content: [{
+              type: "text",
+              text: `Successfully added ${emojis.length} reactions to message ID: ${messageId}`
             }]
           };
         } catch (error) {
@@ -1045,33 +1052,33 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
           // Get the reactions
           const reactions = message.reactions.cache;
-          
+
           // Find the specific reaction
           const reaction = reactions.find(r => r.emoji.toString() === emoji || r.emoji.name === emoji);
-          
+
           if (!reaction) {
             return {
               content: [{ type: "text", text: `Reaction ${emoji} not found on message ID: ${messageId}` }],
               isError: true
             };
           }
-          
+
           if (userId) {
             // Remove a specific user's reaction
             await reaction.users.remove(userId);
             return {
-              content: [{ 
-                type: "text", 
-                text: `Successfully removed reaction ${emoji} from user ID: ${userId} on message ID: ${messageId}` 
+              content: [{
+                type: "text",
+                text: `Successfully removed reaction ${emoji} from user ID: ${userId} on message ID: ${messageId}`
               }]
             };
           } else {
             // Remove bot's reaction
             await reaction.users.remove(client.user.id);
             return {
-              content: [{ 
-                type: "text", 
-                text: `Successfully removed bot's reaction ${emoji} from message ID: ${messageId}` 
+              content: [{
+                type: "text",
+                text: `Successfully removed bot's reaction ${emoji} from message ID: ${messageId}`
               }]
             };
           }
@@ -1105,9 +1112,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           await thread.delete(reason || "Forum post deleted via API");
 
           return {
-            content: [{ 
-              type: "text", 
-              text: `Successfully deleted forum post/thread with ID: ${threadId}` 
+            content: [{
+              type: "text",
+              text: `Successfully deleted forum post/thread with ID: ${threadId}`
             }]
           };
         } catch (error) {
@@ -1149,9 +1156,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           await message.delete();
 
           return {
-            content: [{ 
-              type: "text", 
-              text: `Successfully deleted message with ID: ${messageId} from channel: ${channelId}` 
+            content: [{
+              type: "text",
+              text: `Successfully deleted message with ID: ${messageId} from channel: ${channelId}`
             }]
           };
         } catch (error) {
@@ -1196,9 +1203,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           });
 
           return {
-            content: [{ 
-              type: "text", 
-              text: `Successfully created webhook with ID: ${webhook.id} and token: ${webhook.token}` 
+            content: [{
+              type: "text",
+              text: `Successfully created webhook with ID: ${webhook.id} and token: ${webhook.token}`
             }]
           };
         } catch (error) {
@@ -1236,9 +1243,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           });
 
           return {
-            content: [{ 
-              type: "text", 
-              text: `Successfully sent webhook message to webhook ID: ${webhookId}` 
+            content: [{
+              type: "text",
+              text: `Successfully sent webhook message to webhook ID: ${webhookId}`
             }]
           };
         } catch (error) {
@@ -1276,9 +1283,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           });
 
           return {
-            content: [{ 
-              type: "text", 
-              text: `Successfully edited webhook with ID: ${webhook.id}` 
+            content: [{
+              type: "text",
+              text: `Successfully edited webhook with ID: ${webhook.id}`
             }]
           };
         } catch (error) {
@@ -1311,9 +1318,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           await webhook.delete(reason || "Webhook deleted via API");
 
           return {
-            content: [{ 
-              type: "text", 
-              text: `Successfully deleted webhook with ID: ${webhook.id}` 
+            content: [{
+              type: "text",
+              text: `Successfully deleted webhook with ID: ${webhook.id}`
             }]
           };
         } catch (error) {
@@ -1330,16 +1337,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
-        content: [{ 
-          type: "text", 
+        content: [{
+          type: "text",
           text: `Invalid arguments: ${error.errors
             .map((e) => `${e.path.join(".")}: ${e.message}`)
-            .join(", ")}` 
+            .join(", ")}`
         }],
         isError: true
       };
     }
-    
+
     return {
       content: [{ type: "text", text: `Error executing tool: ${error}` }],
       isError: true
@@ -1349,20 +1356,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 // Auto-login on startup if token is available
 const autoLogin = async () => {
-    const token = config.DISCORD_TOKEN;
-    if (token) {
-        try {
-            await client.login(token);
-        } catch (error) {
-            console.error("Auto-login failed:", error);
-        }
-    } else {
-        console.log("No Discord token found in config, skipping auto-login");
+  const token = config.DISCORD_TOKEN;
+  if (token) {
+    try {
+      await client.login(token);
+    } catch (error) {
+      console.error("Auto-login failed:", error);
     }
+  } else {
+    console.error("No Discord token found in config, skipping auto-login");
+  }
 };
 
 // Start auto-login process
-autoLogin();
-  
+await autoLogin();
+
 const transport = new StdioServerTransport();
 await server.connect(transport);
