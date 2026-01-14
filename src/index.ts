@@ -916,10 +916,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               tier: guild.premiumTier,
               subscriptions: guild.premiumSubscriptionCount
             },
-            channelList: channels.map(c => ({
+            channelList: [...channels.values()].filter((c): c is NonNullable<typeof c> => c !== null).map(c => ({
               id: c.id,
-              name: c.name,
-              type: ChannelType[c.type] || c.type
+              name: 'name' in c ? c.name : 'Unknown',
+              type: (ChannelType as any)[c.type] || String(c.type)
             }))
           };
 
